@@ -9,6 +9,8 @@ import java.awt.Toolkit;
 import java.io.Serial;
 import java.util.Objects;
 import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -41,7 +43,23 @@ public final class LambdaFilter extends JFrame {
         /**
          * Commands.
          */
-        IDENTITY("No modifications", Function.identity());
+        IDENTITY("No modifications", Function.identity()),
+        LOWERCASE("Convert to lowercase", String::toLowerCase),
+        COUNTNUMERCHARS("Count the number of chars", s -> Long.toString(s.chars().count())),
+        COUNTNUMBERLINES("Count the number of lines", s -> Long.toString(s.lines().count())),
+        LISTWORDSALPHABETICORDER("List all words in alphabetic order", s -> s.lines()
+            .flatMap(l -> Stream.of(l.split("\s")))
+            .filter(w -> !w.isBlank())
+            .sorted()
+            .collect(Collectors.joining("\n"))),
+        LISTCOUTERWORD("The count for each word", s -> s.lines()
+            .flatMap(l -> Stream.of(l.split("\s")))
+            .filter(w -> !w.isBlank())
+            .collect(Collectors.groupingBy(w -> w, Collectors.counting()))
+            .entrySet()
+            .stream()
+            .map(e -> e.getKey() + "->" + e.getValue())
+            .collect(Collectors.joining("\n")));
 
         private final String commandName;
         private final Function<String, String> fun;
@@ -59,6 +77,7 @@ public final class LambdaFilter extends JFrame {
         public String translate(final String s) {
             return fun.apply(s);
         }
+
     }
 
     private LambdaFilter() {
@@ -92,6 +111,7 @@ public final class LambdaFilter extends JFrame {
         final int sh = (int) screen.getHeight();
         setSize(sw / 4, sh / 4);
         setLocationByPlatform(true);
+
     }
 
     /**
