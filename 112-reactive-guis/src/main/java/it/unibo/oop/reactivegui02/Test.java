@@ -31,7 +31,6 @@ public final class Test {
      * deve essere volatile? - la disabilitazione dei pulsanti sia realizzata
      * col metodo setEnabled
      */
-
     /**
      * Main method to start the GUI.
      *
